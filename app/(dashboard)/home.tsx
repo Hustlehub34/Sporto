@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import avatar from '../../assets/images/avatar.avif';
 
 interface Turf {
   id: string;
@@ -282,12 +283,22 @@ const NOTIFICATIONS: Notification[] = [
   },
 ];
 
+
 export default function HomeScreen() {
   const router = useRouter();
   const [searchText, setSearchText] = useState('');
   const [selectedSport, setSelectedSport] = useState('All');
   const [searchExpanded, setSearchExpanded] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
+  const [greeting, setGreeting] = useState('');
+
+  // Set greeting based on time of day
+  React.useEffect(() => {
+    const hour = new Date().getHours();
+    if (hour < 12) setGreeting('Good Morning');
+    else if (hour < 17) setGreeting('Good Afternoon');
+    else setGreeting('Good Evening');
+  }, []);
 
   const filteredPopularTurfs = selectedSport === 'All'
     ? POPULAR_TURFS
@@ -311,21 +322,30 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#1a1a1a" />
+      <StatusBar barStyle="light-content" backgroundColor="#667eea" />
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Header with Gradient */}
-        <LinearGradient
-          colors={['#667eea', '#764ba2', '#f093fb']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.header}
-        >
-          <View style={styles.headerTop}>
-            <View style={styles.headerLeft}>
-              <Text style={styles.greeting}>Hello, Player! 🎮</Text>
-              <Text style={styles.subtitle}>Ready to dominate today?</Text>
+        {/* Modern Curved Header */}
+        <View style={styles.headerWrapper}>
+          <LinearGradient
+            colors={['#667eea', '#764ba2', '#f093fb']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.header}
+          >
+            {/* Animated Background Pattern */}
+            <View style={styles.backgroundPattern}>
+              <View style={[styles.circle, styles.circle1]} />
+              <View style={[styles.circle, styles.circle2]} />
+              <View style={[styles.circle, styles.circle3]} />
             </View>
+
+            <View style={styles.headerTop}>
+              <View style={styles.headerLeft}>
+                <Text style={styles.greeting}>{greeting} 👋</Text>
+                <Text style={styles.userName}>Alex Johnson</Text>
+                <Text style={styles.subtitle}>Let's find your perfect match!</Text>
+              </View>
             <View style={styles.headerRight}>
               {/* Search Icon */}
               <TouchableOpacity
@@ -365,15 +385,11 @@ export default function HomeScreen() {
                 style={styles.profileButton}
                 onPress={() => router.push('/profile')}
               >
-                <LinearGradient
-                  colors={['#FFD700', '#FFA500']}
-                  style={styles.profileGradient}
-                >
+     
                   <Image
-                    source={{ uri: 'https://via.placeholder.com/80/4CAF50/ffffff?text=U' }}
+                    source= {avatar }
                     style={styles.profileImage}
                   />
-                </LinearGradient>
               </TouchableOpacity>
             </View>
           </View>
@@ -409,16 +425,17 @@ export default function HomeScreen() {
               </TouchableOpacity>
             ))}
           </ScrollView>
-        </LinearGradient>
+          </LinearGradient>
+        </View>
 
-        {/* Popular Turfs Section */}
+               {/* Popular Turfs Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <View>
               <Text style={styles.sectionTitle}>Popular Turfs</Text>
               <Text style={styles.sectionSubtitle}>Trending near you</Text>
             </View>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push('/all-turfs')}>
               <Text style={styles.seeAllText}>See All</Text>
             </TouchableOpacity>
           </View>
@@ -435,61 +452,127 @@ export default function HomeScreen() {
                 activeOpacity={0.9}
                 onPress={() => router.push('/turf-detail')}
               >
-                <Image source={{ uri: turf.image }} style={styles.popularCardImage} />
+                {/* Glassmorphism Effect Layer */}
+                <View style={styles.popularCardGlass}>
+                  <LinearGradient
+                    colors={['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.05)']}
+                    style={styles.popularGlassGradient}
+                  />
+                </View>
 
-                {/* Stats Badges - Subtle */}
-                <View style={styles.statsContainer}>
-                  <View style={styles.statBadge3D}>
-                    <View style={styles.statBadgeInner}>
-                      <Ionicons name="people" size={12} color="#FFF" />
-                      <View style={styles.statBadgeContent}>
-                        <Text style={styles.statBadgeNumber}>{turf.playerRequests}</Text>
-                        <Text style={styles.statBadgeLabel}>requests</Text>
-                      </View>
-                    </View>
+                <View style={styles.popularCardImageWrapper}>
+                  <Image source={{ uri: turf.image }} style={styles.popularCardImage} />
+
+                  {/* Enhanced Gradient Overlay */}
+                  <LinearGradient
+                    colors={['transparent', 'transparent', 'rgba(0,0,0,0.8)']}
+                    style={styles.imageOverlay}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 0, y: 1 }}
+                  />
+
+                  {/* Premium Rating Badge with Glow */}
+                  <View style={styles.popularRatingContainer}>
+                    <LinearGradient
+                      colors={['#FFD700', '#FFA500']}
+                      style={styles.popularRatingBadge}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                    >
+                      <Ionicons name="star" size={12} color="#FFF" />
+                      <Text style={styles.popularRatingTextWhite}>{turf.rating}</Text>
+                    </LinearGradient>
                   </View>
 
-                  <View style={styles.statBadge3D}>
-                    <View style={styles.statBadgeInner}>
-                      <Ionicons name="calendar" size={12} color="#FFF" />
-                      <View style={styles.statBadgeContent}>
-                        <Text style={styles.statBadgeNumber}>{turf.bookingsCount}</Text>
-                        <Text style={styles.statBadgeLabel}>bookings</Text>
-                      </View>
+                  {/* Sport Badge with Blur */}
+                  <View style={styles.popularSportContainer}>
+                    <LinearGradient
+                      colors={['rgba(102,126,234,0.95)', 'rgba(118,75,162,0.95)']}
+                      style={styles.popularSportBadge}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 0 }}
+                    >
+                      <Ionicons
+                        name={turf.sport === 'Cricket' ? 'fitness' :
+                              turf.sport === 'Football' ? 'football' : 'basketball'}
+                        size={10}
+                        color="#FFF"
+                      />
+                      <Text style={styles.popularSportText}>{turf.sport}</Text>
+                    </LinearGradient>
+                  </View>
+
+                  {/* Bottom Overlay Info */}
+                  <View style={styles.popularImageInfo}>
+                    <Text style={styles.popularImageName} numberOfLines={1}>{turf.name}</Text>
+                    <View style={styles.popularImageLocation}>
+                      <Ionicons name="location" size={10} color="#FFF" />
+                      <Text style={styles.popularImageLocationText}>{turf.location}</Text>
                     </View>
                   </View>
                 </View>
 
+                {/* Enhanced Content Section */}
                 <LinearGradient
-                  colors={['transparent', 'rgba(0,0,0,0.9)']}
-                  style={styles.popularCardGradient}
+                  colors={['#ffffff', '#fafafa']}
+                  style={styles.popularCardContent}
                 >
-                  <View style={styles.popularCardBadge}>
-                    <Ionicons name="star" size={12} color="#FFD700" />
-                    <Text style={styles.popularCardRating}>{turf.rating}</Text>
-                    <View style={styles.ratingGlow} />
+                  {/* Stats Pills */}
+                  <View style={styles.popularCardStats}>
+                    {turf.playerRequests && (
+                      <View style={styles.popularStatPill}>
+                        <LinearGradient
+                          colors={['rgba(102,126,234,0.1)', 'rgba(118,75,162,0.1)']}
+                          style={styles.popularStatPillBg}
+                        >
+                          <Ionicons name="people" size={10} color="#667eea" />
+                          <Text style={styles.popularStatPillText}>{turf.playerRequests}</Text>
+                        </LinearGradient>
+                      </View>
+                    )}
+                    {turf.bookingsCount && (
+                      <View style={styles.popularStatPill}>
+                        <LinearGradient
+                          colors={['rgba(240,147,251,0.1)', 'rgba(245,87,108,0.1)']}
+                          style={styles.popularStatPillBg}
+                        >
+                          <Ionicons name="trending-up" size={10} color="#f093fb" />
+                          <Text style={styles.popularStatPillText}>{turf.bookingsCount}</Text>
+                        </LinearGradient>
+                      </View>
+                    )}
+                    <View style={styles.popularStatPill}>
+                      <LinearGradient
+                        colors={['rgba(76,175,80,0.1)', 'rgba(69,160,73,0.1)']}
+                        style={styles.popularStatPillBg}
+                      >
+                        <Ionicons name="navigate" size={10} color="#4CAF50" />
+                        <Text style={styles.popularStatPillText}>{turf.distance}</Text>
+                      </LinearGradient>
+                    </View>
                   </View>
 
-                  <View style={styles.popularCardInfo}>
-                    <Text style={styles.popularCardName}>{turf.name}</Text>
-                    <View style={styles.popularCardLocation}>
-                      <Ionicons name="location" size={12} color="#fff" />
-                      <Text style={styles.popularCardLocationText}>{turf.location}</Text>
-                      <Text style={styles.popularCardDistance}>• {turf.distance}</Text>
-                    </View>
-                    <View style={styles.popularCardFooter}>
-                      <LinearGradient
-                        colors={['#4CAF50', '#45a049']}
-                        style={styles.priceTag3D}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 1 }}
-                      >
-                        <Text style={styles.popularCardPrice}>{turf.price}/hr</Text>
-                      </LinearGradient>
-                      <View style={styles.sportBadge}>
-                        <Text style={styles.sportBadgeText}>{turf.sport}</Text>
+                  {/* Price and Book Section */}
+                  <View style={styles.popularCardFooter}>
+                    <View style={styles.popularPriceContainer}>
+                      <Text style={styles.popularPriceLabel}>Starting</Text>
+                      <View style={styles.popularPriceRow}>
+                        <Text style={styles.popularPriceAmount}>{turf.price}</Text>
+                        <Text style={styles.popularPriceUnit}>/hr</Text>
                       </View>
                     </View>
+
+                    <TouchableOpacity style={styles.popularBookButton} activeOpacity={0.8}>
+                      <LinearGradient
+                        colors={['#667eea', '#764ba2', '#f093fb']}
+                        style={styles.popularBookGradient}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 0 }}
+                      >
+                        <Text style={styles.popularBookText}>Book</Text>
+                        <Ionicons name="arrow-forward" size={14} color="#FFF" />
+                      </LinearGradient>
+                    </TouchableOpacity>
                   </View>
                 </LinearGradient>
               </TouchableOpacity>
@@ -497,7 +580,105 @@ export default function HomeScreen() {
           </ScrollView>
         </View>
 
+        {/* Quick Actions - Clean Modern Cards */}
+        <View style={styles.quickActionsContainer}>
+          <View style={styles.quickActionHeader}>
+            <Text style={styles.quickActionsTitle}>Quick Actions</Text>
+            <Text style={styles.quickActionsSubtitle}>Your favorite shortcuts</Text>
+          </View>
 
+          <View style={styles.quickActionsGrid}>
+            {/* Challenge Card */}
+            <TouchableOpacity
+              style={styles.quickActionCard}
+              onPress={() => router.push('/challenge')}
+              activeOpacity={0.8}
+            >
+              <LinearGradient
+                colors={['#667eea', '#764ba2']}
+                style={styles.quickActionGradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+              >
+                <View style={styles.quickActionContent}>
+                  <View style={styles.quickActionIconBg}>
+                    <Ionicons name="trophy" size={24} color="#FFF" />
+                  </View>
+                  <Text style={styles.quickActionTitle}>Challenge</Text>
+                  <Text style={styles.quickActionSubtitle}>Create Teams</Text>
+                </View>
+              </LinearGradient>
+            </TouchableOpacity>
+
+            {/* Bookings Card */}
+            <TouchableOpacity
+              style={styles.quickActionCard}
+              onPress={() => router.push('/bookings')}
+              activeOpacity={0.8}
+            >
+              <LinearGradient
+                colors={['#4CAF50', '#45a049']}
+                style={styles.quickActionGradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+              >
+                <View style={styles.quickActionContent}>
+                  <View style={styles.quickActionIconBg}>
+                    <Ionicons name="calendar" size={24} color="#FFF" />
+                  </View>
+                  <Text style={styles.quickActionTitle}>Bookings</Text>
+                  <Text style={styles.quickActionSubtitle}>Manage</Text>
+                </View>
+              </LinearGradient>
+            </TouchableOpacity>
+
+            {/* Events Card */}
+            <TouchableOpacity
+              style={styles.quickActionCard}
+              onPress={() => router.push('/events')}
+              activeOpacity={0.8}
+            >
+              <LinearGradient
+                colors={['#FF9800', '#F57C00']}
+                style={styles.quickActionGradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+              >
+                <View style={styles.quickActionContent}>
+                  <View style={styles.quickActionIconBg}>
+                    <Ionicons name="flag" size={24} color="#FFF" />
+                  </View>
+                  <Text style={styles.quickActionTitle}>Events</Text>
+                  <Text style={styles.quickActionSubtitle}>Tournaments</Text>
+                </View>
+              </LinearGradient>
+            </TouchableOpacity>
+
+            {/* Request Card */}
+            <TouchableOpacity
+              style={styles.quickActionCard}
+              onPress={() => router.push('/request')}
+              activeOpacity={0.8}
+            >
+              <LinearGradient
+                colors={['#f093fb', '#f5576c']}
+                style={styles.quickActionGradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+              >
+                <View style={styles.quickActionContent}>
+                  <View style={styles.quickActionIconBg}>
+                    <Ionicons name="person-add" size={24} color="#FFF" />
+                  </View>
+                  <Text style={styles.quickActionTitle}>Request</Text>
+                  <Text style={styles.quickActionSubtitle}>Find Players</Text>
+                </View>
+              </LinearGradient>
+            </TouchableOpacity>
+
+   
+          </View>
+        </View>
         {/* Upcoming Events Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
@@ -505,7 +686,7 @@ export default function HomeScreen() {
               <Text style={styles.sectionTitle}>Upcoming Events</Text>
               <Text style={styles.sectionSubtitle}>Join and compete</Text>
             </View>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push('/all-turfs')}>
               <Text style={styles.seeAllText}>See All</Text>
             </TouchableOpacity>
           </View>
@@ -553,6 +734,9 @@ export default function HomeScreen() {
           </ScrollView>
         </View>
 
+
+
+
         {/* Nearby Turfs Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
@@ -560,7 +744,7 @@ export default function HomeScreen() {
               <Text style={styles.sectionTitle}>Nearby Turfs</Text>
               <Text style={styles.sectionSubtitle}>Closest to you</Text>
             </View>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push('/all-turfs')}>
               <Text style={styles.seeAllText}>See All</Text>
             </TouchableOpacity>
           </View>
@@ -610,7 +794,7 @@ export default function HomeScreen() {
               <Text style={styles.sectionTitle}>Featured Turfs</Text>
               <Text style={styles.sectionSubtitle}>Premium venues</Text>
             </View>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push('/all-turfs')}>
               <Text style={styles.seeAllText}>See All</Text>
             </TouchableOpacity>
           </View>
@@ -668,7 +852,7 @@ export default function HomeScreen() {
               <Text style={styles.sectionTitle}>Highest Discounts</Text>
               <Text style={styles.sectionSubtitle}>Save big on bookings</Text>
             </View>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push('/all-turfs')}>
               <Text style={styles.seeAllText}>See All</Text>
             </TouchableOpacity>
           </View>
@@ -718,9 +902,7 @@ export default function HomeScreen() {
           </ScrollView>
         </View>
 
-
-
-
+ 
         <View style={{ height: 30 }} />
       </ScrollView>
 
@@ -791,6 +973,8 @@ export default function HomeScreen() {
           </View>
         </View>
       )}
+
+
     </View>
   );
 }
@@ -800,12 +984,54 @@ const { width } = Dimensions.get('window');
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#f8f9fa',
+  },
+  headerWrapper: {
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
+    overflow: 'hidden',
+    shadowColor: '#667eea',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    elevation: 15,
   },
   header: {
     paddingTop: 45,
-    paddingBottom: 20,
+    paddingBottom: 30,
     paddingHorizontal: 20,
+    position: 'relative',
+  },
+  backgroundPattern: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    opacity: 0.1,
+  },
+  circle: {
+    position: 'absolute',
+    borderRadius: 500,
+    backgroundColor: '#FFF',
+  },
+  circle1: {
+    width: 200,
+    height: 200,
+    top: -100,
+    right: -50,
+  },
+  circle2: {
+    width: 150,
+    height: 150,
+    bottom: -75,
+    left: -75,
+  },
+  circle3: {
+    width: 100,
+    height: 100,
+    top: 50,
+    left: 50,
   },
   headerTop: {
     flexDirection: 'row',
@@ -822,15 +1048,27 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   greeting: {
-    fontSize: 22,
+    fontSize: 14,
+    fontWeight: '600',
+    color: 'rgba(255, 255, 255, 0.9)',
+    marginBottom: 4,
+    letterSpacing: 0.5,
+    textTransform: 'uppercase',
+  },
+  userName: {
+    fontSize: 28,
     fontWeight: 'bold',
     color: '#fff',
-    marginBottom: 2,
+    marginBottom: 6,
+    textShadowColor: 'rgba(0, 0, 0, 0.2)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
   },
   subtitle: {
-    fontSize: 12,
-    color: 'rgba(255, 255, 255, 0.8)',
+    fontSize: 15,
+    color: 'rgba(255, 255, 255, 0.85)',
     fontWeight: '500',
+    letterSpacing: 0.3,
   },
   iconButton: {
     borderRadius: 12,
@@ -970,16 +1208,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 12,
   },
-  quickActionCard: {
-    flex: 1,
-    borderRadius: 15,
-    overflow: 'hidden',
-  },
-  quickActionGradient: {
-    padding: 15,
-    alignItems: 'center',
-    gap: 8,
-  },
   quickActionText: {
     fontSize: 11,
     color: '#fff',
@@ -1020,33 +1248,207 @@ const styles = StyleSheet.create({
     paddingRight: 10,
   },
   popularCard: {
-    width: width * 0.75,
-    height: 280,
-    borderRadius: 20,
+    width: width * 0.7,
     marginRight: 15,
-    overflow: 'visible',
+    borderRadius: 20,
     backgroundColor: '#fff',
-    shadowColor: '#000',
+    shadowColor: '#667eea',
     shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.2,
     shadowRadius: 15,
     elevation: 10,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  popularCardGlass: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 1,
+    opacity: 0.1,
+  },
+  popularGlassGradient: {
+    flex: 1,
+  },
+  popularCardImageWrapper: {
+    width: '100%',
+    height: 160,
+    position: 'relative',
   },
   popularCardImage: {
     width: '100%',
     height: '100%',
+    resizeMode: 'cover',
+  },
+  imageOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  premiumBadge: {
+    position: 'absolute',
+    top: 15,
+    left: 15,
+    borderRadius: 20,
+    overflow: 'hidden',
+  },
+  premiumBadgeGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    gap: 4,
+  },
+  premiumBadgeText: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: '#FFF',
+    letterSpacing: 1,
+  },
+  // Stats Container - New Dashboard Design
+  statsContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: 15,
+    marginTop: -30,
+    gap: 10,
+    zIndex: 10,
+  },
+  statCard: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 20,
+    borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.15,
+    shadowRadius: 10,
+    elevation: 8,
+  },
+  statNumber: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#FFF',
+    marginVertical: 5,
+  },
+  statLabel: {
+    fontSize: 12,
+    color: 'rgba(255,255,255,0.95)',
+    fontWeight: '600',
+    marginBottom: 2,
+  },
+  statSubtext: {
+    fontSize: 10,
+    color: 'rgba(255,255,255,0.8)',
+  },
+  // Quick Actions Section - Glossy 3D Design
+  quickActionsContainer: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 10,
+  },
+  quickActionHeader: {
+    marginBottom: 16,
+  },
+  quickActionsTitle: {
+    fontSize: 22,
+    fontWeight: '900',
+    color: '#1a1a1a',
+    letterSpacing: 0.5,
+  },
+  quickActionsSubtitle: {
+    fontSize: 13,
+    color: '#666',
+    marginTop: 4,
+    fontWeight: '500',
+  },
+  quickActionsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+  quickActionCard: {
+    width: (width - 50) / 2,  // 2 cards per row with gaps
+    aspectRatio: 1.4,  // Made taller/smaller
+    borderRadius: 16,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 5,
+    marginBottom: 12,
+  },
+  quickActionGloss: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: '50%',
+    zIndex: 1,
+    opacity: 0.5,
+  },
+  quickActionGlossLayer: {
+    flex: 1,
+  },
+  quickActionGradient: {
+    flex: 1,
+    padding: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  quickActionContent: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+  },
+  quickActionIconWrapper: {
+    marginBottom: 8,
+  },
+  quickActionIconShadow: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 5,
     borderRadius: 20,
   },
-  // 3D Stats Container - Floating at the top
-  statsContainer: {
+  quickActionIcon: {
+    marginBottom: 12,
+  },
+  quickActionIconBg: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.3)',
+  },
+  quickActionTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#FFF',
+    textAlign: 'center',
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
+  },
+  quickActionSubtitle: {
+    fontSize: 11,
+    color: 'rgba(255,255,255,0.85)',
+    textAlign: 'center',
+    fontWeight: '500',
+  },
+  ratingContainer: {
     position: 'absolute',
-    top: 12,
-    left: 12,
-    right: 12,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    zIndex: 10,
-    gap: 8,
+    top: 15,
+    right: 15,
   },
   statBadge3D: {
     flex: 1,
@@ -1220,16 +1622,89 @@ const styles = StyleSheet.create({
   ratingBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFF9E6',
-    paddingHorizontal: 6,
-    paddingVertical: 3,
-    borderRadius: 8,
-    gap: 3,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 15,
+    gap: 4,
   },
   ratingText: {
-    fontSize: 10,
+    fontSize: 14,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#FFF',
+  },
+  popularCardContent: {
+    padding: 15,
+  },
+  popularCardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  sportChip: {
+    borderRadius: 15,
+    overflow: 'hidden',
+  },
+  sportChipGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    gap: 4,
+  },
+  sportChipText: {
+    fontSize: 11,
+    fontWeight: 'bold',
+    color: '#FFF',
+  },
+  distanceDot: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: '#999',
+    marginHorizontal: 8,
+  },
+  priceWrapper: {
+    flex: 1,
+  },
+  priceLabel: {
+    fontSize: 10,
+    color: '#999',
+    marginBottom: 4,
+  },
+  priceGradient: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 12,
+    alignSelf: 'flex-start',
+  },
+  priceAmount: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#FFF',
+  },
+  priceUnit: {
+    fontSize: 12,
+    color: 'rgba(255,255,255,0.9)',
+    marginLeft: 2,
+  },
+  bookNowButton: {
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  bookNowGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    gap: 6,
+  },
+  bookNowText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#FFF',
   },
   nearbyCardLocation: {
     flexDirection: 'row',
@@ -1609,5 +2084,692 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: '#4CAF50',
     marginLeft: 8,
+  },
+  // Challenge Section Styles
+  challengeContainer: {
+    paddingHorizontal: 20,
+    gap: 15,
+  },
+  createTeamCard: {
+    borderRadius: 20,
+    overflow: 'hidden',
+    shadowColor: '#667eea',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  createTeamGradient: {
+    padding: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 15,
+  },
+  createTeamIconWrapper: {
+    borderRadius: 50,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  createTeamIconBg: {
+    width: 70,
+    height: 70,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 35,
+    borderWidth: 3,
+    borderColor: 'rgba(255,255,255,0.3)',
+  },
+  createTeamTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#FFF',
+    flex: 1,
+    marginBottom: 4,
+  },
+  createTeamSubtitle: {
+    fontSize: 13,
+    color: 'rgba(255,255,255,0.85)',
+    flex: 1,
+  },
+  createTeamArrow: {
+    marginLeft: 'auto',
+  },
+  browseTeamsCard: {
+    borderRadius: 20,
+    overflow: 'hidden',
+    shadowColor: '#f093fb',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  browseTeamsGradient: {
+    padding: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 15,
+  },
+  browseTeamsIconWrapper: {
+    borderRadius: 50,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  browseTeamsIconBg: {
+    width: 70,
+    height: 70,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 35,
+    borderWidth: 3,
+    borderColor: 'rgba(255,255,255,0.3)',
+  },
+  browseTeamsContent: {
+    flex: 1,
+  },
+  browseTeamsTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#FFF',
+    marginBottom: 4,
+  },
+  browseTeamsSubtitle: {
+    fontSize: 13,
+    color: 'rgba(255,255,255,0.85)',
+  },
+  browseTeamsBadge: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: 'rgba(255,255,255,0.25)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 3,
+    borderColor: 'rgba(255,255,255,0.4)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 5,
+  },
+  browseTeamsBadgeText: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#FFF',
+  },
+  // Create Team Modal Form Styles
+  formLabel: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#1a1a1a',
+    marginBottom: 8,
+    marginTop: 12,
+  },
+  formInput: {
+    backgroundColor: '#f5f5f5',
+    borderRadius: 12,
+    paddingHorizontal: 15,
+    paddingVertical: 14,
+    fontSize: 15,
+    color: '#1a1a1a',
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+  },
+  sportSelection: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 10,
+  },
+  sportOption: {
+    flex: 1,
+    borderRadius: 15,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  sportOptionActive: {
+    shadowColor: '#667eea',
+    shadowOpacity: 0.3,
+    elevation: 6,
+  },
+  sportOptionGradient: {
+    padding: 20,
+    alignItems: 'center',
+    gap: 10,
+  },
+  sportOptionText: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#666',
+  },
+  sportOptionTextActive: {
+    color: '#FFF',
+  },
+  formatSelection: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 10,
+  },
+  formatOption: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    borderWidth: 2,
+    borderColor: '#e0e0e0',
+    alignItems: 'center',
+  },
+  formatOptionActive: {
+    backgroundColor: '#667eea',
+    borderColor: '#667eea',
+    shadowColor: '#667eea',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 4,
+  },
+  formatOptionText: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#666',
+  },
+  formatOptionTextActive: {
+    color: '#FFF',
+  },
+  timeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  timeSeparator: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#666',
+  },
+  saveTeamButton: {
+    borderRadius: 15,
+    overflow: 'hidden',
+    marginTop: 20,
+    shadowColor: '#667eea',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  saveTeamGradient: {
+    flexDirection: 'row',
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 10,
+  },
+  saveTeamText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#FFF',
+  },
+  // Challenge Teams Modal Styles
+  teamCard: {
+    borderRadius: 20,
+    overflow: 'hidden',
+    marginBottom: 15,
+    shadowColor: '#667eea',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 6,
+  },
+  teamCardGradient: {
+    padding: 20,
+  },
+  teamCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  teamCardIconWrapper: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.3)',
+  },
+  teamCardHeaderInfo: {
+    flex: 1,
+  },
+  teamCardName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#FFF',
+    marginBottom: 4,
+  },
+  teamCardFormatBadge: {
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 8,
+    alignSelf: 'flex-start',
+  },
+  teamCardFormatText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#FFF',
+  },
+  teamCardTimeBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    borderRadius: 10,
+    gap: 4,
+  },
+  teamCardTimeText: {
+    fontSize: 11,
+    color: 'rgba(255,255,255,0.8)',
+    fontWeight: '600',
+  },
+  teamCardDivider: {
+    height: 1,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    marginVertical: 15,
+  },
+  teamCardBody: {
+    gap: 10,
+  },
+  teamCardInfoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  teamCardInfoLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: 'rgba(255,255,255,0.8)',
+    width: 80,
+  },
+  teamCardInfoValue: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#FFF',
+    flex: 1,
+  },
+  challengeButton: {
+    borderRadius: 15,
+    overflow: 'hidden',
+    marginTop: 15,
+    shadowColor: '#f093fb',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  challengeButtonGradient: {
+    flexDirection: 'row',
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 8,
+  },
+  challengeButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#FFF',
+  },
+  // Minimal Stats Badge for Popular Turfs
+  statBadgeMinimal: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    gap: 4,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.2)',
+  },
+  statBadgeText: {
+    fontSize: 11,
+    fontWeight: 'bold',
+    color: '#FFF',
+  },
+  // Quick Challenge Button Styles
+  challengeButtonContainer: {
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+  },
+  quickChallengeButton: {
+    borderRadius: 20,
+    overflow: 'hidden',
+    shadowColor: '#667eea',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  quickChallengeGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 18,
+    paddingHorizontal: 24,
+    gap: 12,
+  },
+  quickChallengeIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  quickChallengeText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#FFF',
+    flex: 1,
+    textAlign: 'center',
+  },
+  // Challenge Modal Main View Styles
+  challengeMainView: {
+    gap: 15,
+    paddingVertical: 10,
+  },
+  challengeOptionCard: {
+    borderRadius: 20,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 5,
+  },
+  challengeOptionDisabled: {
+    opacity: 0.6,
+  },
+  challengeOptionGradient: {
+    padding: 25,
+    alignItems: 'center',
+    gap: 12,
+  },
+  challengeOptionTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#FFF',
+  },
+  challengeOptionSubtitle: {
+    fontSize: 14,
+    color: 'rgba(255,255,255,0.85)',
+  },
+  // My Team Card Styles
+  myTeamCard: {
+    borderRadius: 15,
+    overflow: 'hidden',
+    marginTop: 10,
+  },
+  myTeamGradient: {
+    padding: 15,
+    alignItems: 'center',
+  },
+  myTeamLabel: {
+    fontSize: 12,
+    color: 'rgba(255,255,255,0.85)',
+    fontWeight: '600',
+  },
+  myTeamName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#FFF',
+    marginTop: 4,
+  },
+  myTeamFormat: {
+    fontSize: 14,
+    color: 'rgba(255,255,255,0.9)',
+    marginTop: 2,
+  },
+  // Back Button Styles
+  backButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    marginBottom: 15,
+    gap: 8,
+  },
+  backButtonText: {
+    fontSize: 16,
+    color: '#666',
+    fontWeight: '500',
+  },
+  // Dropdown Styles
+  dropdownButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#f5f5f5',
+    borderRadius: 12,
+    paddingHorizontal: 15,
+    paddingVertical: 14,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+  },
+  dropdownButtonText: {
+    fontSize: 15,
+    color: '#1a1a1a',
+  },
+  placeholderText: {
+    color: '#999',
+  },
+  dropdownList: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    marginBottom: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  dropdownItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 15,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  dropdownItemText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#1a1a1a',
+  },
+  dropdownItemSubtext: {
+    fontSize: 12,
+    color: '#666',
+    marginTop: 2,
+  },
+  sportTag: {
+    backgroundColor: '#667eea',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  sportTagText: {
+    fontSize: 11,
+    fontWeight: 'bold',
+    color: '#FFF',
+  },
+  // Date/Time Selection Styles
+  dateText: {
+    fontSize: 15,
+    color: '#1a1a1a',
+    flex: 1,
+  },
+  timeInputWrapper: {
+    flex: 1,
+  },
+  timeButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#f5f5f5',
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 14,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+  },
+  timeButtonText: {
+    fontSize: 14,
+    color: '#1a1a1a',
+  },
+  // Enhanced Popular Card Missing Styles
+  popularRatingContainer: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+  },
+  popularRatingTextWhite: {
+    fontSize: 13,
+    fontWeight: 'bold',
+    color: '#FFF',
+  },
+  popularSportContainer: {
+    position: 'absolute',
+    top: 12,
+    left: 12,
+  },
+  popularImageInfo: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 12,
+  },
+  popularImageName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#FFF',
+    marginBottom: 4,
+    textShadowColor: 'rgba(0,0,0,0.5)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
+  },
+  popularImageLocation: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  popularImageLocationText: {
+    fontSize: 12,
+    color: 'rgba(255,255,255,0.9)',
+  },
+  popularStatPill: {
+    borderRadius: 20,
+    overflow: 'hidden',
+  },
+  popularStatPillBg: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    gap: 4,
+  },
+  popularStatPillText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#333',
+  },
+  popularPriceContainer: {
+    flex: 1,
+  },
+  popularPriceLabel: {
+    fontSize: 10,
+    color: '#999',
+    marginBottom: 2,
+  },
+  popularPriceRow: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+  },
+  // Final missing Popular Card styles
+  popularRatingBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 12,
+    gap: 4,
+  },
+  popularSportBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 10,
+    gap: 4,
+  },
+  popularSportText: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: '#FFF',
+    textTransform: 'uppercase',
+  },
+  popularCardStats: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 12,
+    paddingVertical: 8,
+  },
+  popularPriceAmount: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#1a1a1a',
+  },
+  popularPriceUnit: {
+    fontSize: 12,
+    color: '#666',
+    marginLeft: 2,
+  },
+  popularBookButton: {
+    borderRadius: 12,
+    overflow: 'hidden',
+    shadowColor: '#667eea',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  popularBookGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    gap: 6,
+  },
+  popularBookText: {
+    fontSize: 13,
+    fontWeight: 'bold',
+    color: '#FFF',
   },
 });
