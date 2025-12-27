@@ -59,7 +59,7 @@ export default function ReferEarnScreen() {
   const handleShare = async () => {
     try {
       await Share.share({
-        message: `Hey! Join Sporto and book amazing turfs near you. Use my referral code ${referralCode} to get ₹100 off on your first booking! Download now: https://sporto.app`,
+        message: `Hey! Join Spoortx and book amazing turfs near you. Use my referral code ${referralCode} to get ₹100 off on your first booking! Download now: https://Spoortx.app`,
       });
     } catch (error) {
       console.error(error);
@@ -222,7 +222,7 @@ export default function ReferEarnScreen() {
             • Minimum booking amount of ₹500 required to claim reward{'\n'}
             • Rewards are valid for 90 days from earning date{'\n'}
             • Cannot be combined with other offers{'\n'}
-            • Sporto reserves the right to modify the program
+            • Spoortx reserves the right to modify the program
           </Text>
         </View>
       </ScrollView>

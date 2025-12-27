@@ -85,7 +85,7 @@ export default function LocationScreen() {
 
         <Text style={styles.title}>Enable Location</Text>
         <Text style={styles.subtitle}>
-          Allow Sporto to access your location to show nearby turfs and provide better recommendations
+          Allow Spoortx to access your location to show nearby turfs and provide better recommendations
         </Text>
 
         <View style={styles.featuresContainer}>

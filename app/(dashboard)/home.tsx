@@ -452,20 +452,12 @@ export default function HomeScreen() {
                 activeOpacity={0.9}
                 onPress={() => router.push('/turf-detail')}
               >
-                {/* Glassmorphism Effect Layer */}
-                <View style={styles.popularCardGlass}>
-                  <LinearGradient
-                    colors={['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.05)']}
-                    style={styles.popularGlassGradient}
-                  />
-                </View>
-
                 <View style={styles.popularCardImageWrapper}>
                   <Image source={{ uri: turf.image }} style={styles.popularCardImage} />
 
                   {/* Enhanced Gradient Overlay */}
                   <LinearGradient
-                    colors={['transparent', 'transparent', 'rgba(0,0,0,0.8)']}
+                    colors={['transparent', 'transparent', 'rgba(0, 0, 0, 0.8)']}
                     style={styles.imageOverlay}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 0, y: 1 }}
@@ -513,10 +505,7 @@ export default function HomeScreen() {
                 </View>
 
                 {/* Enhanced Content Section */}
-                <LinearGradient
-                  colors={['#ffffff', '#fafafa']}
-                  style={styles.popularCardContent}
-                >
+                <View style={styles.popularCardContent}>
                   {/* Stats Pills */}
                   <View style={styles.popularCardStats}>
                     {turf.playerRequests && (
@@ -574,7 +563,7 @@ export default function HomeScreen() {
                       </LinearGradient>
                     </TouchableOpacity>
                   </View>
-                </LinearGradient>
+                </View>
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -984,17 +973,17 @@ const { width } = Dimensions.get('window');
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#fafbfcff',
   },
   headerWrapper: {
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
     overflow: 'hidden',
-    shadowColor: '#667eea',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.3,
-    shadowRadius: 20,
-    elevation: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 4,
   },
   header: {
     paddingTop: 45,
@@ -1074,10 +1063,10 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     overflow: 'hidden',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 2,
   },
   iconButtonGradient: {
     width: 44,
@@ -1109,11 +1098,11 @@ const styles = StyleSheet.create({
     height: 44,
     borderRadius: 22,
     overflow: 'hidden',
-    shadowColor: '#FFD700',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 2,
   },
   profileGradient: {
     width: '100%',
@@ -1180,18 +1169,10 @@ const styles = StyleSheet.create({
     gap: 8,
     borderWidth: 2,
     borderColor: 'rgba(255, 255, 255, 0.3)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 5,
   },
   sportFilterButtonActive: {
     backgroundColor: '#4CAF50',
     borderColor: '#FFF',
-    shadowColor: '#4CAF50',
-    shadowOpacity: 0.5,
-    elevation: 8,
   },
   sportFilterText: {
     fontSize: 14,
@@ -1214,7 +1195,8 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   section: {
-    marginTop: 25,
+    marginTop: 10,
+    marginBottom: 10,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -1248,29 +1230,23 @@ const styles = StyleSheet.create({
     paddingRight: 10,
   },
   popularCard: {
-    width: width * 0.7,
+    width: width * 0.75,
     marginRight: 15,
-    borderRadius: 20,
+    borderRadius: 16,
+    marginBottom:2,
     backgroundColor: '#fff',
-    shadowColor: '#667eea',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.2,
-    shadowRadius: 15,
-    elevation: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 1,
     overflow: 'hidden',
-    position: 'relative',
   },
   popularCardGlass: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 1,
-    opacity: 0.1,
+    display: 'none',
   },
   popularGlassGradient: {
-    flex: 1,
+    display: 'none',
   },
   popularCardImageWrapper: {
     width: '100%',
@@ -1347,8 +1323,8 @@ const styles = StyleSheet.create({
   // Quick Actions Section - Glossy 3D Design
   quickActionsContainer: {
     paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 10,
+    marginTop: 15,
+    marginBottom: 1,
   },
   quickActionHeader: {
     marginBottom: 16,
@@ -1371,16 +1347,16 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   quickActionCard: {
-    width: (width - 50) / 2,  // 2 cards per row with gaps
-    aspectRatio: 1.4,  // Made taller/smaller
+    width: (width - 50) / 2,
+    aspectRatio: 1.4,
     borderRadius: 16,
     overflow: 'hidden',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 5,
-    marginBottom: 12,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
+    marginBottom: 10,
   },
   quickActionGloss: {
     position: 'absolute',
@@ -1589,15 +1565,17 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   nearbyCard: {
-    width: width * 0.42,
+    width: width * 0.52,
     backgroundColor: '#fff',
-    borderRadius: 15,
+    borderRadius: 16,
     marginRight: 15,
+        marginBottom:6,
+
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowRadius: 6,
     elevation: 3,
   },
   nearbyCardImage: {
@@ -1622,18 +1600,20 @@ const styles = StyleSheet.create({
   ratingBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 15,
-    gap: 4,
+    backgroundColor: 'rgba(255,255,255,0.9)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    gap: 3,
   },
   ratingText: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: 'bold',
-    color: '#FFF',
+    color: '#1a1a1a',
   },
   popularCardContent: {
-    padding: 15,
+    padding: 16,
+    backgroundColor: '#fff',
   },
   popularCardHeader: {
     flexDirection: 'row',
@@ -1739,13 +1719,13 @@ const styles = StyleSheet.create({
   discountCard: {
     width: width * 0.55,
     backgroundColor: '#fff',
-    borderRadius: 15,
+    borderRadius: 16,
     marginRight: 15,
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowRadius: 6,
     elevation: 3,
   },
   discountCardImage: {
@@ -1817,15 +1797,15 @@ const styles = StyleSheet.create({
   featuredCard: {
     width: width * 0.65,
     height: 260,
-    borderRadius: 20,
+    borderRadius: 16,
     marginRight: 15,
     overflow: 'hidden',
     backgroundColor: '#fff',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 6,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
   },
   featuredCardImage: {
     width: '100%',
@@ -1906,14 +1886,13 @@ const styles = StyleSheet.create({
   eventCard: {
     width: width * 0.7,
     backgroundColor: '#fff',
-    borderRadius: 15,
+    borderRadius: 16,
     marginRight: 15,
+        marginBottom:5,
+
     overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    elevation: 4,
+ 
+    elevation: 2,
   },
   eventCardImage: {
     width: '100%',
@@ -2739,7 +2718,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 8,
     marginBottom: 12,
-    paddingVertical: 8,
   },
   popularPriceAmount: {
     fontSize: 18,
@@ -2754,11 +2732,6 @@ const styles = StyleSheet.create({
   popularBookButton: {
     borderRadius: 12,
     overflow: 'hidden',
-    shadowColor: '#667eea',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
   },
   popularBookGradient: {
     flexDirection: 'row',

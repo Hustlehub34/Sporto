@@ -173,8 +173,8 @@ export default function MoreScreen() {
 
         {/* App Info */}
         <View style={styles.appInfo}>
-          <Text style={styles.appInfoText}>Sporto v1.0.0</Text>
-          <Text style={styles.appInfoText}>© 2025 Sporto. All rights reserved.</Text>
+          <Text style={styles.appInfoText}>Spoortx v1.0.0</Text>
+          <Text style={styles.appInfoText}>© 2025 Spoortx. All rights reserved.</Text>
         </View>
       </ScrollView>
     </View>

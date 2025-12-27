@@ -1,26 +1,27 @@
 {
   "expo": {
-    "name": "Spoortx",
-    "slug": "Spoortx",
+    "name": "sporto",
+    "slug": "sporto",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "assets/images/SPOORTX.png",
-    "scheme": "Spoortx",
+    "icon": "./assets/images/icon.png",
+    "scheme": "sporto",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
+
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/SPOORTX.png",
-        "backgroundImage": "./assets/images/SPOORTX.png",
-        "monochromeImage": "./assets/images/SPOORTX.png"
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "backgroundImage": "./assets/images/android-icon-background.png",
+        "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.sugat.sporto"
+      "package": "com.hustlehub.sporto"
     },
     "web": {
       "output": "static",
@@ -45,12 +46,7 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    },
-    "extra": {
-      "router": {},
-      "eas": {
-        "projectId": "08729b33-7836-4919-b5c1-802ea88bfd82"
-      }
     }
+
   }
 }

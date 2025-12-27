@@ -49,7 +49,7 @@ export default function MoreScreen() {
   };
 
   const handleAbout = () => {
-    Alert.alert('About', 'App version 1.0.0\nDeveloped by Sporto Team');
+    Alert.alert('About', 'App version 1.0.0\nDeveloped by Spoortx Team');
   };
 
   const handleLogout = () => {

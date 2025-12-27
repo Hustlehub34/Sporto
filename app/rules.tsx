@@ -180,7 +180,7 @@ export default function RulesScreen() {
         <View style={styles.footer}>
           <MaterialIcons name="gavel" size={40} color="#ccc" />
           <Text style={styles.footerText}>
-            By using Sporto, you agree to comply with all the above rules and guidelines
+            By using Spoortx, you agree to comply with all the above rules and guidelines
           </Text>
           <Text style={styles.footerSubtext}>
             Last updated: October 24, 2025

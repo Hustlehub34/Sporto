@@ -1,23 +1,21 @@
-import { Ionicons, MaterialIcons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useRouter } from 'expo-router';
 import React from 'react';
-import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+} from 'react-native';
+import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 
-export default function RoleSelectionScreen() {
+export default function AuthOptionsScreen() {
   const router = useRouter();
-
-  const handleUserSelection = () => {
-    router.push('/auth/options');
-  };
-
-  const handleOwnerRegistration = () => {
-    router.push('/turf-owner-register');
-  };
 
   return (
     <View style={styles.container}>
-      {/* Animated Background */}
+      {/* Background Gradient */}
       <LinearGradient
         colors={['#667eea', '#764ba2', '#f093fb']}
         style={styles.backgroundGradient}
@@ -27,21 +25,32 @@ export default function RoleSelectionScreen() {
         <View style={styles.backgroundPattern}>
           <View style={[styles.circle, styles.circle1]} />
           <View style={[styles.circle, styles.circle2]} />
-          <View style={[styles.circle, styles.circle3]} />
         </View>
       </LinearGradient>
 
       <View style={styles.content}>
+        {/* Back Button */}
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.back()}
+        >
+          <Ionicons name="arrow-back" size={24} color="#FFF" />
+        </TouchableOpacity>
+
+        {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.title}>Welcome to Spoortx! 🏆</Text>
-          <Text style={styles.subtitle}>Your Ultimate Sports Arena Hub</Text>
+          <Text style={styles.title}>Welcome Player! 🎮</Text>
+          <Text style={styles.subtitle}>
+            Choose an option to continue
+          </Text>
         </View>
 
-        <View style={styles.cardsContainer}>
-          {/* User Card */}
+        {/* Options Container */}
+        <View style={styles.optionsContainer}>
+          {/* Create Account Card */}
           <TouchableOpacity
-            style={styles.card}
-            onPress={handleUserSelection}
+            style={styles.optionCard}
+            onPress={() => router.push('/auth/signup')}
             activeOpacity={0.9}
           >
             <LinearGradient
@@ -49,18 +58,18 @@ export default function RoleSelectionScreen() {
               style={styles.cardGloss}
             />
 
-            <View style={styles.cardContent}>
+            <View style={styles.optionContent}>
               <LinearGradient
                 colors={['#4CAF50', '#45a049']}
                 style={styles.iconContainer}
               >
-                <MaterialIcons name="sports-soccer" size={50} color="#FFF" />
+                <Ionicons name="person-add" size={40} color="#FFF" />
               </LinearGradient>
 
-              <View style={styles.cardInfo}>
-                <Text style={styles.cardTitle}>I'm a Player! 🎮</Text>
-                <Text style={styles.cardDescription}>
-                  Book turfs • Join tournaments • Challenge friends
+              <View style={styles.optionInfo}>
+                <Text style={styles.optionTitle}>Create Account</Text>
+                <Text style={styles.optionDescription}>
+                  New to Spoortx? Register now
                 </Text>
               </View>
 
@@ -73,28 +82,46 @@ export default function RoleSelectionScreen() {
             </View>
           </TouchableOpacity>
 
-          {/* Owner Registration Link */}
+          {/* Login Card */}
           <TouchableOpacity
-            style={styles.ownerLinkContainer}
-            onPress={handleOwnerRegistration}
-            activeOpacity={0.7}
+            style={styles.optionCard}
+            onPress={() => router.push('/auth/login')}
+            activeOpacity={0.9}
           >
             <LinearGradient
-              colors={['rgba(255,255,255,0.2)', 'rgba(255,255,255,0.1)']}
-              style={styles.ownerLinkBg}
-            >
-              <Ionicons name="business" size={16} color="#FFD700" />
-              <Text style={styles.ownerLinkText}>
-                Register your own turf →
-              </Text>
-            </LinearGradient>
+              colors={['rgba(255,255,255,0.15)', 'rgba(255,255,255,0.05)']}
+              style={styles.cardGloss}
+            />
+
+            <View style={styles.optionContent}>
+              <LinearGradient
+                colors={['#667eea', '#764ba2']}
+                style={styles.iconContainer}
+              >
+                <Ionicons name="log-in" size={40} color="#FFF" />
+              </LinearGradient>
+
+              <View style={styles.optionInfo}>
+                <Text style={styles.optionTitle}>Login</Text>
+                <Text style={styles.optionDescription}>
+                  Already have an account? Sign in
+                </Text>
+              </View>
+
+              <LinearGradient
+                colors={['#667eea', '#764ba2']}
+                style={styles.arrowButton}
+              >
+                <Ionicons name="arrow-forward" size={20} color="#FFF" />
+              </LinearGradient>
+            </View>
           </TouchableOpacity>
         </View>
 
         {/* Footer */}
         <View style={styles.footer}>
           <Text style={styles.footerText}>
-            Join thousands of sports enthusiasts! 🌟
+            By continuing, you agree to our Terms & Privacy Policy
           </Text>
         </View>
       </View>
@@ -137,18 +164,16 @@ const styles = StyleSheet.create({
     bottom: 100,
     left: -50,
   },
-  circle3: {
-    width: 150,
-    height: 150,
-    top: height * 0.4,
-    right: 50,
-  },
   content: {
     flex: 1,
     paddingHorizontal: 20,
   },
+  backButton: {
+    marginTop: 50,
+    marginBottom: 20,
+  },
   header: {
-    marginTop: height * 0.15,
+    marginTop: height * 0.1,
     alignItems: 'center',
     marginBottom: 60,
   },
@@ -167,12 +192,12 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.9)',
     textAlign: 'center',
   },
-  cardsContainer: {
+  optionsContainer: {
     flex: 1,
     justifyContent: 'center',
     gap: 20,
   },
-  card: {
+  optionCard: {
     backgroundColor: 'rgba(255,255,255,0.95)',
     borderRadius: 24,
     padding: 0,
@@ -192,7 +217,7 @@ const styles = StyleSheet.create({
     height: '50%',
     zIndex: 1,
   },
-  cardContent: {
+  optionContent: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 20,
@@ -204,22 +229,22 @@ const styles = StyleSheet.create({
     borderRadius: 35,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#4CAF50',
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 6,
   },
-  cardInfo: {
+  optionInfo: {
     flex: 1,
   },
-  cardTitle: {
+  optionTitle: {
     fontSize: 22,
     fontWeight: 'bold',
     color: '#1a1a1a',
     marginBottom: 6,
   },
-  cardDescription: {
+  optionDescription: {
     fontSize: 13,
     color: '#666',
     lineHeight: 18,
@@ -231,37 +256,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  arrowContainer: {
-    position: 'absolute',
-    right: 20,
-    top: '50%',
-  },
-  ownerLinkContainer: {
-    marginTop: 10,
-    alignItems: 'center',
-  },
-  ownerLinkBg: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: 20,
-    gap: 8,
-    borderWidth: 1,
-    borderColor: 'rgba(255,215,0,0.3)',
-  },
-  ownerLinkText: {
-    fontSize: 13,
-    color: '#FFD700',
-    fontWeight: '600',
-  },
   footer: {
     paddingBottom: 40,
     alignItems: 'center',
   },
   footerText: {
-    fontSize: 14,
-    color: 'rgba(255,255,255,0.8)',
+    fontSize: 12,
+    color: 'rgba(255,255,255,0.7)',
     textAlign: 'center',
   },
 });

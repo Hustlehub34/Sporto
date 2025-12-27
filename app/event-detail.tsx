@@ -170,7 +170,7 @@ export default function EventDetailScreen() {
   const event = {
     ...baseEvent,
     organizer: {
-      name: 'Sporto Events',
+      name: 'Spoortx Events',
       rating: 4.8,
       eventsHosted: 124,
       verified: true,

@@ -1,37 +1,40 @@
-import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
-  Alert,
-  Dimensions,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
+  View,
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Dimensions,
+  Alert,
 } from 'react-native';
-
-// Static user data
-const STATIC_USER = {
-  name: "Vikram Singh",
-  email: "max@gmail.com",
-  mobile: "9876543210",
-  password: "Pass@123"
-};
+import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const STATIC_OTP = "123456"; // Static OTP for testing
 
-export default function LoginScreen() {
+export default function SignupScreen() {
   const router = useRouter();
+  const [step, setStep] = useState<'form' | 'otp'>('form');
+
+  // Form fields
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [step, setStep] = useState<'email' | 'otp'>('email'); // email, otp
+  const [mobile, setMobile] = useState('');
+  const [password, setPassword] = useState('');
   const [otp, setOtp] = useState('');
 
-  const handleSendOTP = () => {
+  const handleSubmitForm = () => {
+    // Validate all fields
+    if (!name.trim()) {
+      Alert.alert('Error', 'Please enter your full name');
+      return;
+    }
+
     if (!email.trim()) {
       Alert.alert('Error', 'Please enter your email');
       return;
@@ -44,13 +47,27 @@ export default function LoginScreen() {
       return;
     }
 
-    // Check if user exists
-    if (email.toLowerCase() !== STATIC_USER.email.toLowerCase()) {
-      Alert.alert('Error', 'No account found with this email. Please create an account first.');
+    if (!mobile.trim()) {
+      Alert.alert('Error', 'Please enter your mobile number');
       return;
     }
 
-    // User exists, send OTP
+    if (mobile.length !== 10) {
+      Alert.alert('Error', 'Please enter a valid 10-digit mobile number');
+      return;
+    }
+
+    if (!password.trim()) {
+      Alert.alert('Error', 'Please enter a password');
+      return;
+    }
+
+    if (password.length < 6) {
+      Alert.alert('Error', 'Password must be at least 6 characters');
+      return;
+    }
+
+    // Show OTP alert and move to OTP verification
     Alert.alert('OTP Sent! 📧', `We've sent an OTP to ${email}\n\nUse: ${STATIC_OTP}`);
     setStep('otp');
   };
@@ -67,7 +84,7 @@ export default function LoginScreen() {
     }
 
     // Success - navigate to dashboard
-    Alert.alert('Success! ✅', 'Login successful!', [
+    Alert.alert('Account Created! 🎉', 'Your account has been created successfully!', [
       { text: 'OK', onPress: () => router.replace('/(dashboard)/home') }
     ]);
   };
@@ -103,13 +120,13 @@ export default function LoginScreen() {
             <Ionicons name="arrow-back" size={24} color="#FFF" />
           </TouchableOpacity>
 
-          {/* Step 1: Email Input */}
-          {step === 'email' && (
+          {/* Step 1: Registration Form */}
+          {step === 'form' && (
             <>
               <View style={styles.header}>
-                <Text style={styles.title}>Login 🏆</Text>
+                <Text style={styles.title}>Create Account 🎉</Text>
                 <Text style={styles.subtitle}>
-                  Enter your email to continue
+                  Fill in your details to get started
                 </Text>
               </View>
 
@@ -118,6 +135,21 @@ export default function LoginScreen() {
                   colors={['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.05)']}
                   style={styles.cardGloss}
                 />
+
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>Full Name</Text>
+                  <View style={styles.inputWrapper}>
+                    <Ionicons name="person" size={20} color="#667eea" style={styles.inputIcon} />
+                    <TextInput
+                      style={styles.input}
+                      placeholder="Enter your full name"
+                      placeholderTextColor="rgba(0,0,0,0.4)"
+                      value={name}
+                      onChangeText={setName}
+                      autoCapitalize="words"
+                    />
+                  </View>
+                </View>
 
                 <View style={styles.inputGroup}>
                   <Text style={styles.inputLabel}>Email Address</Text>
@@ -136,9 +168,40 @@ export default function LoginScreen() {
                   </View>
                 </View>
 
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>Mobile Number</Text>
+                  <View style={styles.inputWrapper}>
+                    <Ionicons name="call" size={20} color="#667eea" style={styles.inputIcon} />
+                    <TextInput
+                      style={styles.input}
+                      placeholder="10-digit mobile number"
+                      placeholderTextColor="rgba(0,0,0,0.4)"
+                      value={mobile}
+                      onChangeText={setMobile}
+                      keyboardType="phone-pad"
+                      maxLength={10}
+                    />
+                  </View>
+                </View>
+
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>Password</Text>
+                  <View style={styles.inputWrapper}>
+                    <Ionicons name="lock-closed" size={20} color="#667eea" style={styles.inputIcon} />
+                    <TextInput
+                      style={styles.input}
+                      placeholder="Create a strong password"
+                      placeholderTextColor="rgba(0,0,0,0.4)"
+                      value={password}
+                      onChangeText={setPassword}
+                      secureTextEntry
+                    />
+                  </View>
+                </View>
+
                 <TouchableOpacity
                   style={styles.submitButton}
-                  onPress={handleSendOTP}
+                  onPress={handleSubmitForm}
                   activeOpacity={0.8}
                 >
                   <LinearGradient
@@ -147,7 +210,7 @@ export default function LoginScreen() {
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
                   >
-                    <Text style={styles.submitButtonText}>Send OTP</Text>
+                    <Text style={styles.submitButtonText}>Continue</Text>
                     <Ionicons name="arrow-forward" size={20} color="#FFF" />
                   </LinearGradient>
                 </TouchableOpacity>
@@ -205,16 +268,16 @@ export default function LoginScreen() {
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
                   >
-                    <Text style={styles.submitButtonText}>Verify OTP</Text>
+                    <Text style={styles.submitButtonText}>Verify & Create Account</Text>
                     <Ionicons name="checkmark-circle" size={20} color="#FFF" />
                   </LinearGradient>
                 </TouchableOpacity>
 
                 <TouchableOpacity
                   style={styles.resendLink}
-                  onPress={() => setStep('email')}
+                  onPress={() => setStep('form')}
                 >
-                  <Text style={styles.resendText}>Change Email?</Text>
+                  <Text style={styles.resendText}>Go Back to Form</Text>
                 </TouchableOpacity>
               </View>
             </>

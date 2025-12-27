@@ -45,7 +45,7 @@ const EVENTS: Event[] = [
     entryFee: '₹500',
     image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&q=80',
     type: 'upcoming',
-    organizer: 'Sporto Events',
+    organizer: 'Spoortx Events',
   },
   {
     id: '2',
