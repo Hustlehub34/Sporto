@@ -1,15 +1,16 @@
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  StyleSheet,
-  StatusBar,
-  TextInput,
   Alert,
+  Modal,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 
 interface Booking {
   id: string;
@@ -31,7 +32,7 @@ const ALL_BOOKINGS: Booking[] = [
     turfName: 'Green Valley Cricket Turf',
     customerName: 'Rahul Sharma',
     customerPhone: '+91 98765 43210',
-    date: '2025-10-24',
+    date: '2025-12-28',
     time: '6:00 PM - 8:00 PM',
     duration: '2 hours',
     amount: 2400,
@@ -41,36 +42,36 @@ const ALL_BOOKINGS: Booking[] = [
   },
   {
     id: '2',
-    turfName: 'Champions Cricket Ground',
+    turfName: 'Champions Football Ground',
     customerName: 'Priya Patel',
     customerPhone: '+91 98765 43211',
-    date: '2025-10-25',
+    date: '2025-12-28',
     time: '7:00 AM - 9:00 AM',
     duration: '2 hours',
     amount: 3200,
     status: 'pending',
     playersCount: 11,
-    sport: 'Cricket',
+    sport: 'Football',
   },
   {
     id: '3',
-    turfName: 'Sports Arena',
+    turfName: 'Sports Arena Badminton',
     customerName: 'Amit Kumar',
     customerPhone: '+91 98765 43212',
-    date: '2025-10-24',
+    date: '2025-12-27',
     time: '4:00 PM - 6:00 PM',
     duration: '2 hours',
     amount: 2000,
     status: 'completed',
-    playersCount: 8,
-    sport: 'Cricket',
+    playersCount: 4,
+    sport: 'Badminton',
   },
   {
     id: '4',
-    turfName: 'Pro Cricket Club',
+    turfName: 'Green Valley Cricket Turf',
     customerName: 'Sneha Reddy',
     customerPhone: '+91 98765 43213',
-    date: '2025-10-26',
+    date: '2025-12-26',
     time: '5:00 PM - 7:00 PM',
     duration: '2 hours',
     amount: 2800,
@@ -80,23 +81,23 @@ const ALL_BOOKINGS: Booking[] = [
   },
   {
     id: '5',
-    turfName: 'Green Valley Cricket Turf',
+    turfName: 'Champions Football Ground',
     customerName: 'Vijay Singh',
     customerPhone: '+91 98765 43214',
-    date: '2025-10-23',
+    date: '2025-12-25',
     time: '3:00 PM - 5:00 PM',
     duration: '2 hours',
     amount: 2400,
     status: 'completed',
     playersCount: 10,
-    sport: 'Cricket',
+    sport: 'Football',
   },
   {
     id: '6',
-    turfName: 'Champions Cricket Ground',
+    turfName: 'Green Valley Cricket Turf',
     customerName: 'Ravi Patel',
     customerPhone: '+91 98765 43215',
-    date: '2025-10-22',
+    date: '2025-12-24',
     time: '6:00 PM - 8:00 PM',
     duration: '2 hours',
     amount: 3200,
@@ -106,9 +107,18 @@ const ALL_BOOKINGS: Booking[] = [
   },
 ];
 
+const MY_TURFS = [
+  'Green Valley Cricket Turf',
+  'Champions Football Ground',
+  'Sports Arena Badminton',
+];
+
 export default function BookingsScreen() {
   const [selectedFilter, setSelectedFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [selectedTurf, setSelectedTurf] = useState<string>('all');
+  const [selectedSport, setSelectedSport] = useState<string>('all');
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -161,6 +171,13 @@ export default function BookingsScreen() {
     ]);
   };
 
+  const clearFilters = () => {
+    setSelectedTurf('all');
+    setSelectedSport('all');
+    setSelectedFilter('all');
+    setSearchQuery('');
+  };
+
   const filteredBookings = ALL_BOOKINGS.filter((booking) => {
     const matchesStatus =
       selectedFilter === 'all' || booking.status === selectedFilter;
@@ -168,13 +185,21 @@ export default function BookingsScreen() {
       !searchQuery ||
       booking.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       booking.turfName.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesStatus && matchesSearch;
+    const matchesTurf =
+      selectedTurf === 'all' || booking.turfName === selectedTurf;
+    const matchesSport =
+      selectedSport === 'all' || booking.sport === selectedSport;
+    return matchesStatus && matchesSearch && matchesTurf && matchesSport;
   });
 
   const getFilterCount = (status: string) => {
     if (status === 'all') return ALL_BOOKINGS.length;
     return ALL_BOOKINGS.filter((b) => b.status === status).length;
   };
+
+  const activeFiltersCount =
+    (selectedTurf !== 'all' ? 1 : 0) +
+    (selectedSport !== 'all' ? 1 : 0);
 
   return (
     <View style={styles.container}>
@@ -183,8 +208,16 @@ export default function BookingsScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Bookings Management</Text>
-        <TouchableOpacity style={styles.filterButton}>
+        <TouchableOpacity
+          style={styles.filterButton}
+          onPress={() => setShowFilterModal(true)}
+        >
           <MaterialIcons name="filter-list" size={24} color="#333" />
+          {activeFiltersCount > 0 && (
+            <View style={styles.filterBadge}>
+              <Text style={styles.filterBadgeText}>{activeFiltersCount}</Text>
+            </View>
+          )}
         </TouchableOpacity>
       </View>
 
@@ -198,6 +231,11 @@ export default function BookingsScreen() {
           onChangeText={setSearchQuery}
           placeholderTextColor="#999"
         />
+        {searchQuery !== '' && (
+          <TouchableOpacity onPress={() => setSearchQuery('')}>
+            <Ionicons name="close-circle" size={20} color="#999" />
+          </TouchableOpacity>
+        )}
       </View>
 
       {/* Status Filters */}
@@ -284,6 +322,33 @@ export default function BookingsScreen() {
           </Text>
         </TouchableOpacity>
       </ScrollView>
+
+      {/* Active Filters Display */}
+      {activeFiltersCount > 0 && (
+        <View style={styles.activeFiltersContainer}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {selectedTurf !== 'all' && (
+              <View style={styles.activeFilterChip}>
+                <Text style={styles.activeFilterText}>Turf: {selectedTurf}</Text>
+                <TouchableOpacity onPress={() => setSelectedTurf('all')}>
+                  <Ionicons name="close-circle" size={16} color="#666" />
+                </TouchableOpacity>
+              </View>
+            )}
+            {selectedSport !== 'all' && (
+              <View style={styles.activeFilterChip}>
+                <Text style={styles.activeFilterText}>Sport: {selectedSport}</Text>
+                <TouchableOpacity onPress={() => setSelectedSport('all')}>
+                  <Ionicons name="close-circle" size={16} color="#666" />
+                </TouchableOpacity>
+              </View>
+            )}
+          </ScrollView>
+          <TouchableOpacity onPress={clearFilters}>
+            <Text style={styles.clearFiltersText}>Clear All</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
       {/* Bookings List */}
       <ScrollView style={styles.bookingsList} showsVerticalScrollIndicator={false}>
@@ -395,6 +460,116 @@ export default function BookingsScreen() {
         )}
         <View style={{ height: 30 }} />
       </ScrollView>
+
+      {/* Filter Modal */}
+      <Modal
+        visible={showFilterModal}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setShowFilterModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Advanced Filters</Text>
+              <TouchableOpacity onPress={() => setShowFilterModal(false)}>
+                <Ionicons name="close" size={28} color="#333" />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView style={styles.modalBody}>
+              {/* Turf Filter */}
+              <Text style={styles.filterSectionTitle}>Select Turf</Text>
+              <TouchableOpacity
+                style={[
+                  styles.filterOption,
+                  selectedTurf === 'all' && styles.filterOptionActive,
+                ]}
+                onPress={() => setSelectedTurf('all')}
+              >
+                <Text
+                  style={[
+                    styles.filterOptionText,
+                    selectedTurf === 'all' && styles.filterOptionTextActive,
+                  ]}
+                >
+                  All Turfs
+                </Text>
+                {selectedTurf === 'all' && (
+                  <Ionicons name="checkmark-circle" size={20} color="#4CAF50" />
+                )}
+              </TouchableOpacity>
+              {MY_TURFS.map((turf) => (
+                <TouchableOpacity
+                  key={turf}
+                  style={[
+                    styles.filterOption,
+                    selectedTurf === turf && styles.filterOptionActive,
+                  ]}
+                  onPress={() => setSelectedTurf(turf)}
+                >
+                  <Text
+                    style={[
+                      styles.filterOptionText,
+                      selectedTurf === turf && styles.filterOptionTextActive,
+                    ]}
+                  >
+                    {turf}
+                  </Text>
+                  {selectedTurf === turf && (
+                    <Ionicons name="checkmark-circle" size={20} color="#4CAF50" />
+                  )}
+                </TouchableOpacity>
+              ))}
+
+              {/* Sport Filter */}
+              <Text style={[styles.filterSectionTitle, { marginTop: 20 }]}>
+                Select Sport
+              </Text>
+              {['all', 'Cricket', 'Football', 'Badminton'].map((sport) => (
+                <TouchableOpacity
+                  key={sport}
+                  style={[
+                    styles.filterOption,
+                    selectedSport === sport && styles.filterOptionActive,
+                  ]}
+                  onPress={() => setSelectedSport(sport)}
+                >
+                  <Text
+                    style={[
+                      styles.filterOptionText,
+                      selectedSport === sport && styles.filterOptionTextActive,
+                    ]}
+                  >
+                    {sport === 'all' ? 'All Sports' : sport}
+                  </Text>
+                  {selectedSport === sport && (
+                    <Ionicons name="checkmark-circle" size={20} color="#4CAF50" />
+                  )}
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+
+            <View style={styles.modalFooter}>
+              <TouchableOpacity
+                style={styles.clearButton}
+                onPress={() => {
+                  clearFilters();
+                  setShowFilterModal(false);
+                }}
+              >
+                <Text style={styles.clearButtonText}>Clear All</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.applyButton}
+                onPress={() => setShowFilterModal(false)}
+              >
+                <Text style={styles.applyButtonText}>Apply Filters</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -426,6 +601,23 @@ const styles = StyleSheet.create({
   },
   filterButton: {
     padding: 5,
+    position: 'relative',
+  },
+  filterBadge: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    backgroundColor: '#F44336',
+    borderRadius: 10,
+    width: 18,
+    height: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  filterBadgeText: {
+    color: '#fff',
+    fontSize: 10,
+    fontWeight: 'bold',
   },
   searchContainer: {
     flexDirection: 'row',
@@ -444,30 +636,61 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   filtersContainer: {
-    flexDirection: 'row',
     paddingHorizontal: 20,
     paddingVertical: 15,
+    maxHeight: 60,
   },
   filterChip: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
     backgroundColor: '#fff',
-    marginRight: 10,
+    marginRight: 8,
     borderWidth: 1,
     borderColor: '#e0e0e0',
+    height: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   filterChipActive: {
     backgroundColor: '#4CAF50',
     borderColor: '#4CAF50',
   },
   filterChipText: {
-    fontSize: 13,
+    fontSize: 12,
     color: '#666',
     fontWeight: '500',
   },
   filterChipTextActive: {
     color: '#fff',
+    fontWeight: '600',
+  },
+  activeFiltersContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingBottom: 10,
+    gap: 10,
+  },
+  activeFilterChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#E8F5E9',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    marginRight: 8,
+    gap: 6,
+  },
+  activeFilterText: {
+    fontSize: 12,
+    color: '#4CAF50',
+    fontWeight: '500',
+  },
+  clearFiltersText: {
+    fontSize: 13,
+    color: '#F44336',
+    fontWeight: '600',
   },
   bookingsList: {
     flex: 1,
@@ -626,5 +849,92 @@ const styles = StyleSheet.create({
     color: '#999',
     marginTop: 8,
     textAlign: 'center',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    maxHeight: '80%',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  modalBody: {
+    padding: 20,
+  },
+  filterSectionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 12,
+  },
+  filterOption: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    borderRadius: 12,
+    marginBottom: 10,
+  },
+  filterOptionActive: {
+    backgroundColor: '#E8F5E9',
+    borderWidth: 1,
+    borderColor: '#4CAF50',
+  },
+  filterOptionText: {
+    fontSize: 15,
+    color: '#666',
+  },
+  filterOptionTextActive: {
+    color: '#4CAF50',
+    fontWeight: '600',
+  },
+  modalFooter: {
+    flexDirection: 'row',
+    padding: 20,
+    gap: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#f0f0f0',
+  },
+  clearButton: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  clearButtonText: {
+    fontSize: 15,
+    color: '#666',
+    fontWeight: '600',
+  },
+  applyButton: {
+    flex: 1,
+    backgroundColor: '#4CAF50',
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  applyButtonText: {
+    fontSize: 15,
+    color: '#fff',
+    fontWeight: '600',
   },
 });

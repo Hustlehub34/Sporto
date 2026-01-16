@@ -3,6 +3,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
+  ActivityIndicator,
   Alert,
   Dimensions,
   ScrollView,
@@ -13,26 +14,76 @@ import {
   View,
 } from 'react-native';
 
+const API_URL = 'https://spoortx.onrender.com/api/turfownerrequest/submit';
+
 export default function TurfOwnerRegisterScreen() {
   const router = useRouter();
-  const [name, setName] = useState('');
-  const [contact, setContact] = useState('');
+  // Enquiry form fields
+  const [ownerName, setOwnerName] = useState('');
+  const [mobile, setMobile] = useState('');
+  const [email, setEmail] = useState('');
+  const [proposedTurfName, setProposedTurfName] = useState('');
+  const [city, setCity] = useState('');
+
   const [showLogin, setShowLogin] = useState(false);
   const [loginId, setLoginId] = useState('');
   const [password, setPassword] = useState('');
   const [enquirySent, setEnquirySent] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSendEnquiry = () => {
-    if (!name.trim() || !contact.trim()) {
+  const validateEmail = (emailStr: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(emailStr);
+  };
+
+  const handleSendEnquiry = async () => {
+    if (!ownerName.trim() || !mobile.trim() || !email.trim() || !proposedTurfName.trim() || !city.trim()) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
-    if (contact.length < 10) {
-      Alert.alert('Error', 'Please enter a valid contact number');
+    if (mobile.length < 10) {
+      Alert.alert('Error', 'Please enter a valid 10-digit mobile number');
       return;
     }
-    setEnquirySent(true);
-    Alert.alert('Success! 🎉', 'Your enquiry has been sent. Our team will contact you soon!');
+    if (!validateEmail(email)) {
+      Alert.alert('Error', 'Please enter a valid email address');
+      return;
+    }
+
+    // Form data to send
+    const enquiryData = {
+      ownerName,
+      mobile,
+      email,
+      proposedTurfName,
+      city,
+    };
+
+    setIsLoading(true);
+
+    try {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(enquiryData),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setEnquirySent(true);
+        Alert.alert('Success!', 'Your enquiry has been sent. Our team will contact you soon!');
+      } else {
+        Alert.alert('Error', result.message || 'Something went wrong. Please try again.');
+      }
+    } catch (error) {
+      console.error('API Error:', error);
+      Alert.alert('Error', 'Failed to submit enquiry. Please check your internet connection and try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleLogin = () => {
@@ -40,8 +91,7 @@ export default function TurfOwnerRegisterScreen() {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
-    Alert.alert('Success', 'Login functionality will be available soon!');
-    // router.push('/turf-owner-dashboard');
+    router.push('/turf-owner/(dashboard)/home');
   };
 
   return (
@@ -138,7 +188,7 @@ export default function TurfOwnerRegisterScreen() {
                 <Ionicons name="checkmark-circle" size={20} color="#4CAF50" />
               </View>
               <Text style={styles.infoText}>
-                <Text style={styles.infoBold}>Zero Commission</Text> for the first 3 months
+                <Text style={styles.infoBold}>7% Commission</Text> Only
               </Text>
             </View>
           </View>
@@ -163,52 +213,106 @@ export default function TurfOwnerRegisterScreen() {
 
             <View style={styles.formHeader}>
               <Ionicons name="send" size={24} color="#667eea" />
-              <Text style={styles.formTitle}>Send Enquiry</Text>
+              <Text style={styles.formTitle} >Send Enquiry</Text>
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>Your Name</Text>
+              <Text style={styles.inputLabel}>Owner Name</Text>
               <View style={styles.inputWrapper}>
-                <Ionicons name="person" size={20} color="#667eea" style={styles.inputIcon} />
+                <Ionicons name="person" size={20} color="#334389ff" style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   placeholder="Enter your full name"
-                  placeholderTextColor="rgba(255,255,255,0.5)"
-                  value={name}
-                  onChangeText={setName}
+                  placeholderTextColor="rgba(0, 0, 0, 0.5)"
+                  value={ownerName}
+                  onChangeText={setOwnerName}
                 />
               </View>
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>Contact Number</Text>
+              <Text style={styles.inputLabel}>Mobile Number</Text>
               <View style={styles.inputWrapper}>
-                <Ionicons name="call" size={20} color="#667eea" style={styles.inputIcon} />
+                <Ionicons name="call" size={20} color="#334389ff" style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
-                  placeholder="Enter your contact number"
-                  placeholderTextColor="rgba(255,255,255,0.5)"
+                  placeholder="Enter 10-digit mobile number"
+                  placeholderTextColor="rgba(0, 0, 0, 0.5)"
                   keyboardType="phone-pad"
                   maxLength={10}
-                  value={contact}
-                  onChangeText={setContact}
+                  value={mobile}
+                  onChangeText={setMobile}
+                />
+              </View>
+            </View>
+
+            <View style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>Email Address</Text>
+              <View style={styles.inputWrapper}>
+                <Ionicons name="mail" size={20} color="#334389ff" style={styles.inputIcon} />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter your email address"
+                  placeholderTextColor="rgba(0, 0, 0, 0.5)"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  value={email}
+                  onChangeText={setEmail}
+                />
+              </View>
+            </View>
+
+            <View style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>Proposed Turf Name</Text>
+              <View style={styles.inputWrapper}>
+                <Ionicons name="football" size={20} color="#334389ff" style={styles.inputIcon} />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter your turf name"
+                  placeholderTextColor="rgba(0, 0, 0, 0.5)"
+                  value={proposedTurfName}
+                  onChangeText={setProposedTurfName}
+                />
+              </View>
+            </View>
+
+            <View style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>City</Text>
+              <View style={styles.inputWrapper}>
+                <Ionicons name="location" size={20} color="#334389ff" style={styles.inputIcon} />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter your city"
+                  placeholderTextColor="rgba(0, 0, 0, 0.5)"
+                  value={city}
+                  onChangeText={setCity}
                 />
               </View>
             </View>
 
             <TouchableOpacity
-              style={styles.submitButton}
+              style={[styles.submitButton, isLoading && styles.submitButtonDisabled]}
               onPress={handleSendEnquiry}
               activeOpacity={0.8}
+              disabled={isLoading}
             >
               <LinearGradient
-                colors={['#4CAF50', '#45a049']}
+                colors={isLoading ? ['#9E9E9E', '#757575'] : ['#4CAF50', '#45a049']}
                 style={styles.submitGradient}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
               >
-                <Text style={styles.submitButtonText}>Send Enquiry</Text>
-                <Ionicons name="send" size={20} color="#FFF" />
+                {isLoading ? (
+                  <>
+                    <ActivityIndicator size="small" color="#FFF" />
+                    <Text style={styles.submitButtonText}>Submitting...</Text>
+                  </>
+                ) : (
+                  <>
+                    <Text style={styles.submitButtonText}>Send Enquiry</Text>
+                    <Ionicons name="send" size={20} color="#FFF" />
+                  </>
+                )}
               </LinearGradient>
             </TouchableOpacity>
           </View>
@@ -238,7 +342,7 @@ export default function TurfOwnerRegisterScreen() {
                     colors={['rgba(255,255,255,0.2)', 'rgba(255,255,255,0.1)']}
                     style={styles.loginLinkBg}
                   >
-                    <Ionicons name="lock-closed" size={18} color="#FFD700" />
+                    <Ionicons name="lock-closed" size={18} color="#000000ff" />
                     <Text style={styles.loginLinkText}>
                       Already a partner? Click here to login →
                     </Text>
@@ -258,7 +362,7 @@ export default function TurfOwnerRegisterScreen() {
                       <TextInput
                         style={styles.input}
                         placeholder="Enter your login ID"
-                        placeholderTextColor="rgba(255,255,255,0.5)"
+                        placeholderTextColor="rgba(0, 0, 0, 0.5)"
                         value={loginId}
                         onChangeText={setLoginId}
                         autoCapitalize="none"
@@ -273,7 +377,7 @@ export default function TurfOwnerRegisterScreen() {
                       <TextInput
                         style={styles.input}
                         placeholder="Enter your password"
-                        placeholderTextColor="rgba(255,255,255,0.5)"
+                        placeholderTextColor="rgba(8, 8, 8, 0.5)"
                         secureTextEntry
                         value={password}
                         onChangeText={setPassword}
@@ -455,7 +559,7 @@ const styles = StyleSheet.create({
   },
   infoBold: {
     fontWeight: 'bold',
-    color: '#667eea',
+    color: '#4d64caff',
   },
   disclaimerBox: {
     flexDirection: 'row',
@@ -526,7 +630,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 14,
     fontSize: 15,
-    color: '#1a1a1a',
+    color: '#272222ff',
   },
   submitButton: {
     borderRadius: 16,
@@ -537,6 +641,10 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 6,
     marginTop: 10,
+  },
+  submitButtonDisabled: {
+    shadowColor: '#9E9E9E',
+    opacity: 0.9,
   },
   submitGradient: {
     flexDirection: 'row',
@@ -592,11 +700,11 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     gap: 10,
     borderWidth: 2,
-    borderColor: 'rgba(255,215,0,0.3)',
+    borderColor: 'rgba(0, 0, 0, 0.3)',
   },
   loginLinkText: {
     fontSize: 13,
-    color: '#FFD700',
+    color: '#161616ff',
     fontWeight: '600',
     flex: 1,
   },
